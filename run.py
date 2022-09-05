@@ -9,7 +9,8 @@ url = sys.argv[1]
 bot = telebot.TeleBot(os.environ['API_KEY'])
 chat_id = os.environ['CHAT_ID']
 
-os.system("touch results/{}-output.txt".format(url))
+os.system("mkdir results/{}".format(url))
+os.system("touch results/{}/output.txt".format(url))
 os.system("chmod 777 /app/* -R")
 
 bot.send_message(chat_id, f"Recon started for {url} !")
@@ -18,6 +19,11 @@ bot.send_message(chat_id, "[+] If you're not getting the notification on finish,
 #0_index_of_results
 os.system(f"bash modules/index.sh {url}")
 
+#1_subdomain_enumeration
+os.system(f"bash modules/subdomains.sh {url}")
+os.system('python insert.py {}'.format(url))
+
+sleep(4)
 #1_dnscan
 os.system(f"bash modules/dnscan.sh {url}")
 os.system('python insert.py {}'.format(url))
@@ -36,12 +42,6 @@ os.system('python insert.py {}'.format(url))
 
 sleep(4)
 
-#4_firwall_detection
-os.system(f"bash modules/firewall.sh {url}")
-os.system('python insert.py {}'.format(url))
-
-sleep(4)
-
 #5_davtest
 os.system(f"bash modules/davtest.sh {url}")
 os.system('python insert.py {}'.format(url))
@@ -54,11 +54,7 @@ os.system('python insert.py {}'.format(url))
 
 sleep(4)
 
-#7_subdomain_enumeration
-os.system(f"bash modules/subdomains.sh {url}")
-os.system('python insert.py {}'.format(url))
 
-sleep(4)
 
 #8_dirbrute
 os.system(f"bash modules/dirb.sh {url}")
@@ -66,11 +62,11 @@ os.system('python insert.py {}'.format(url))
 
 sleep(4)
 
-#9_js+link_finder
+'''#9_js+link_finder
 os.system(f"bash modules/js-finder.sh {url}")
 os.system('python insert.py {}'.format(url))
 
-sleep(4)
+sleep(4)'''
 
 #10_subdomain_takeover
 os.system(f"bash modules/subtake.sh {url}")
@@ -108,15 +104,15 @@ os.system('python insert.py {}'.format(url))
 
 sleep(4)
 
-#16_urls_gather
+'''#16_urls_gather
 os.system(f"bash modules/gather_urls.sh {url}")
 os.system('python insert.py {}'.format(url))
 
-sleep(4)
+sleep(4)'''
 
-#17_seperating_with_gf_patterns
+'''#17_seperating_with_gf_patterns
 os.system(f"bash modules/gf_patterns.sh {url}")
-os.system('python insert.py {}'.format(url))
+os.system('python insert.py {}'.format(url))'''
 
 ###########################################################
 
