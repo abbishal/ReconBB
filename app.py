@@ -727,7 +727,7 @@ font-size:10px;
   DATABASE_URL = os.environ['DATABASE_URL']
   conn = psycopg2.connect(DATABASE_URL, sslmode='require')
   cur = conn.cursor()
-  cur.execute("select domain from output")
+  cur.execute("select domain,id from output")
   t = cur.fetchall()
 
   for i in t:
@@ -737,8 +737,11 @@ font-size:10px;
       <div class="comp">
        <a href="/output/{}"><button class="butn" type="submit">Report</button></a>
       </div>
+      <div class="comp">
+       <form action="deleter" method="POST"><input type="hidden" name="{}"><button class="butn" type="submit">Delete</button></form>
+      </div>
     </li>
-   '''.format(i[0] ,i[0])
+   '''.format(i[0] ,i[0] ,i[1])
 
   res = res + s2
   conn.commit()
@@ -765,7 +768,23 @@ def delete_item():
   return redirect(url_for("check_queue"))
 
 #########################################################################
+@app.route("/deleter", methods=["POST"])
+def deleter_item():
+  t = request.form
+  dic = dict(t)
+  key = list(dic.keys())
+  id = key[0]
 
+  DATABASE_URL = os.environ['DATABASE_URL']
+  conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+  cur = conn.cursor()
+  cur.execute("delete from result where id={}".format(id))
+  conn.commit()
+  cur.close()
+  conn.close()
+  return redirect(url_for("scanned"))
+
+#########################################################################
 @app.route("/issues")
 def issues():
   return render_template("issues.html")
@@ -774,7 +793,7 @@ def issues():
 
 @app.route("/about")
 def about():
-  return redirect("https://github.com/gokulapap/Reconator/wiki")
+  return redirect("https://github.com/abbishal")
 
 #########################################################################
 
@@ -791,15 +810,15 @@ def output(url):
   res = t[0][0]
   final = base64.standard_b64decode(res)
   final = final.decode('utf-8')
-  os.system(f"touch /app/results/{url}-output.txt")
-  f = open('/app/results/{}-output.txt'.format(url), 'w')
+  os.system(f"touch /app/results/{url}/output.txt")
+  f = open('/app/results/{}/output.txt'.format(url), 'w')
   f.write(final)
   f.close()
 
   conn.commit()
   cur.close()
   conn.close()
-  return send_file("/app/results/{}-output.txt".format(url))
+  return send_file("/app/results/{}/output.txt".format(url))
 
 #########################################################################
 
@@ -816,31 +835,6 @@ def initialise():
 @app.route("/results")
 def results():
    return "Results Here!"
-
-#########################################################################
-
-@app.route("/gau/<url>")
-def gau_urls(url):
-  url = url
-  DATABASE_URL = os.environ['DATABASE_URL']
-  conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-  cur = conn.cursor()
-
-  cur.execute(f"select gau from output where domain = '{url}'")
-  t = cur.fetchall()
-
-  res = t[0][0]
-  final = base64.standard_b64decode(res)
-  final = final.decode('utf-8')
-  os.system(f"touch /app/results/{url}-gau.txt")
-  f = open('/app/results/{}-gau.txt'.format(url), 'w')
-  f.write(final)
-  f.close()
-
-  conn.commit()
-  cur.close()
-  conn.close()
-  return send_file("/app/results/{}-gau.txt".format(url))
 
 #########################################################################
 
