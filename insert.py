@@ -81,7 +81,7 @@ else:
     final1 = base64.standard_b64encode(res1)
     final1 = final1.decode('utf-8')
     
-    cur.execute(f"insert into output values ('{url}', '{final1}', 'The Gathered URLs not run yet !');")
+    cur.execute(f"insert into output (domain, result) values ('{url}', '{final1}', 'The Gathered URLs not run yet !');")
     conn.commit()
 
 conn.commit()
