@@ -22,9 +22,10 @@ cur.execute('''
 
 create table output (
 
+id SERIAL PRIMARY KEY,
 domain varchar(30),
-result varchar(10485760),
-gau varchar(10485760)
+result varchar(10485760)
+
 );
 
 ''')
